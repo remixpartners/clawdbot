@@ -1,6 +1,3 @@
-import { chunkMarkdownText } from "../../auto-reply/chunk.js";
-import type { ClawdbotConfig } from "../../config/config.js";
-import { DEFAULT_ACCOUNT_ID } from "../../routing/session-key.js";
 import {
   listGoogleChatAccountIds,
   type ResolvedGoogleChatAccount,
@@ -13,6 +10,7 @@ import {
   sendGoogleChatMedia,
   sendGoogleChatText,
 } from "../../googlechat/send.js";
+import { DEFAULT_ACCOUNT_ID } from "../../routing/session-key.js";
 import { getChatProviderMeta } from "../registry.js";
 import {
   deleteAccountFromConfigSection,
@@ -57,7 +55,12 @@ export const googlechatPlugin: ProviderPlugin<ResolvedGoogleChatAccount> = {
         cfg,
         sectionKey: "googlechat",
         accountId,
-        clearBaseFields: ["projectId", "subscriptionName", "credentialsPath", "name"],
+        clearBaseFields: [
+          "projectId",
+          "subscriptionName",
+          "credentialsPath",
+          "name",
+        ],
       }),
     isConfigured: (account) =>
       Boolean(account.projectId?.trim() && account.subscriptionName?.trim()),
@@ -78,7 +81,9 @@ export const googlechatPlugin: ProviderPlugin<ResolvedGoogleChatAccount> = {
   },
   security: {
     resolveDmPolicy: ({ cfg, accountId, account }) => {
-      const googlechat = (cfg as { googlechat?: { accounts?: Record<string, unknown> } }).googlechat;
+      const googlechat = (
+        cfg as { googlechat?: { accounts?: Record<string, unknown> } }
+      ).googlechat;
       const resolvedAccountId =
         accountId ?? account.accountId ?? DEFAULT_ACCOUNT_ID;
       const useAccountPath = Boolean(googlechat?.accounts?.[resolvedAccountId]);
@@ -107,9 +112,7 @@ export const googlechatPlugin: ProviderPlugin<ResolvedGoogleChatAccount> = {
       if (!trimmed) {
         return {
           ok: false,
-          error: new Error(
-            "Delivering to Google Chat requires --to <spaceId>",
-          ),
+          error: new Error("Delivering to Google Chat requires --to <spaceId>"),
         };
       }
       return { ok: true, to: trimmed };

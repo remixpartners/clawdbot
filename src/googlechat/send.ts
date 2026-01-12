@@ -1,9 +1,11 @@
-import { google, type chat_v1 } from "googleapis";
+import { type chat_v1, google } from "googleapis";
 import type { ResolvedGoogleChatAccount } from "./accounts.js";
 
-let chatClients: Map<string, chat_v1.Chat> = new Map();
+const chatClients: Map<string, chat_v1.Chat> = new Map();
 
-async function getChatClient(account: ResolvedGoogleChatAccount): Promise<chat_v1.Chat> {
+async function getChatClient(
+  account: ResolvedGoogleChatAccount,
+): Promise<chat_v1.Chat> {
   const cacheKey = `${account.accountId}:${account.credentialsPath ?? "default"}`;
   const cached = chatClients.get(cacheKey);
   if (cached) return cached;
@@ -127,8 +129,8 @@ export async function sendGoogleChatMedia(
     },
   };
 
-  if (options.caption) {
-    card.card!.sections![0].widgets!.unshift({
+  if (options.caption && card.card?.sections?.[0]?.widgets) {
+    card.card.sections[0].widgets.unshift({
       textParagraph: { text: options.caption },
     });
   }

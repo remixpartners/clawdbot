@@ -16,7 +16,9 @@ export type ResolvedGoogleChatAccount = {
 };
 
 function listConfiguredAccountIds(cfg: ClawdbotConfig): string[] {
-  const googlechat = (cfg as { googlechat?: { accounts?: Record<string, unknown> } }).googlechat;
+  const googlechat = (
+    cfg as { googlechat?: { accounts?: Record<string, unknown> } }
+  ).googlechat;
   const accounts = googlechat?.accounts;
   if (!accounts || typeof accounts !== "object") return [];
   return Object.keys(accounts).filter(Boolean);
@@ -38,7 +40,11 @@ function resolveAccountConfig(
   cfg: ClawdbotConfig,
   accountId: string,
 ): GoogleChatAccountConfig | undefined {
-  const googlechat = (cfg as { googlechat?: { accounts?: Record<string, GoogleChatAccountConfig> } }).googlechat;
+  const googlechat = (
+    cfg as {
+      googlechat?: { accounts?: Record<string, GoogleChatAccountConfig> };
+    }
+  ).googlechat;
   const accounts = googlechat?.accounts;
   if (!accounts || typeof accounts !== "object") return undefined;
   return accounts[accountId];
@@ -48,7 +54,9 @@ function mergeGoogleChatAccountConfig(
   cfg: ClawdbotConfig,
   accountId: string,
 ): GoogleChatAccountConfig {
-  const googlechat = (cfg as { googlechat?: GoogleChatAccountConfig & { accounts?: unknown } }).googlechat ?? {};
+  const googlechat =
+    (cfg as { googlechat?: GoogleChatAccountConfig & { accounts?: unknown } })
+      .googlechat ?? {};
   const { accounts: _ignored, ...base } = googlechat;
   const account = resolveAccountConfig(cfg, accountId) ?? {};
   return { ...base, ...account };
@@ -58,7 +66,8 @@ export function resolveGoogleChatAccount(params: {
   cfg: ClawdbotConfig;
   accountId?: string | null;
 }): ResolvedGoogleChatAccount {
-  const googlechat = (params.cfg as { googlechat?: { enabled?: boolean } }).googlechat;
+  const googlechat = (params.cfg as { googlechat?: { enabled?: boolean } })
+    .googlechat;
   const baseEnabled = googlechat?.enabled !== false;
 
   const resolve = (accountId: string) => {

@@ -1,6 +1,6 @@
 #!/usr/bin/env npx tsx
+import { execSync } from "node:child_process";
 import express, { type Request, type Response } from "express";
-import { execSync } from "child_process";
 
 const PORT = 18792;
 const app = express();
@@ -21,7 +21,11 @@ app.post("/webhook/googlechat", async (req: Request, res: Response) => {
     const isAddedToSpace = !!chat.addedToSpacePayload;
     const isMessage = !!chat.messagePayload;
 
-    const eventType = isAddedToSpace ? "ADDED_TO_SPACE" : isMessage ? "MESSAGE" : "UNKNOWN";
+    const eventType = isAddedToSpace
+      ? "ADDED_TO_SPACE"
+      : isMessage
+        ? "MESSAGE"
+        : "UNKNOWN";
     console.log(`[googlechat] Received event: ${eventType}`);
 
     if (isAddedToSpace) {
@@ -55,21 +59,27 @@ app.post("/webhook/googlechat", async (req: Request, res: Response) => {
         const escapedText = text.replace(/'/g, "'\\''");
         const sessionId = `googlechat:${spaceId}`;
         const result = execSync(
-          `clawdbot agent --message '${escapedText}' --session-id '${sessionId}' --local 2>&1`,
+          `clawdbot agent --message '${escapedText}' --session-id '${sessionId}' --local`,
           {
-            timeout: 25000,  // 25 second timeout (Google Chat times out at ~30s)
-            encoding: 'utf-8',
+            timeout: 25000, // 25 second timeout (Google Chat times out at ~30s)
+            encoding: "utf-8",
             maxBuffer: 1024 * 1024,
-          }
+          },
         );
-        responseText = result.trim() || "I processed your message but have no response.";
-        console.log(`[googlechat] AI Response: ${responseText.slice(0, 100)}...`);
-      } catch (err: any) {
-        console.error(`[googlechat] CLI error:`, err.message);
-        if (err.killed) {
-          responseText = "Sorry, the request timed out. Please try a simpler question.";
+        responseText =
+          result.trim() || "I processed your message but have no response.";
+        console.log(
+          `[googlechat] AI Response: ${responseText.slice(0, 100)}...`,
+        );
+      } catch (err: unknown) {
+        const error = err as { message?: string; killed?: boolean };
+        console.error(`[googlechat] CLI error:`, error.message);
+        if (error.killed) {
+          responseText =
+            "Sorry, the request timed out. Please try a simpler question.";
         } else {
-          responseText = "Sorry, I encountered an error processing your message.";
+          responseText =
+            "Sorry, I encountered an error processing your message.";
         }
       }
 
@@ -96,6 +106,10 @@ app.post("/webhook/googlechat", async (req: Request, res: Response) => {
 
 app.listen(PORT, () => {
   console.log(`[googlechat] Webhook server running on port ${PORT}`);
-  console.log(`[googlechat] Local: http://localhost:${PORT}/webhook/googlechat`);
-  console.log(`[googlechat] Use ngrok URL + /webhook/googlechat for Google Chat config`);
+  console.log(
+    `[googlechat] Local: http://localhost:${PORT}/webhook/googlechat`,
+  );
+  console.log(
+    `[googlechat] Use ngrok URL + /webhook/googlechat for Google Chat config`,
+  );
 });

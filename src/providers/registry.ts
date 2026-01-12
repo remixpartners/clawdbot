@@ -101,7 +101,8 @@ const CHAT_PROVIDER_META: Record<ChatProviderId, ChatProviderMeta> = {
     selectionLabel: "Google Chat (Pub/Sub)",
     docsPath: "/googlechat",
     docsLabel: "googlechat",
-    blurb: "Google Workspace only; uses Pub/Sub for firewall-friendly operation.",
+    blurb:
+      "Google Workspace only; uses Pub/Sub for firewall-friendly operation.",
   },
 };
 

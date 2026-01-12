@@ -59,11 +59,7 @@ export type GoogleChatMessage = {
 };
 
 export type GoogleChatEvent = {
-  type:
-    | "MESSAGE"
-    | "ADDED_TO_SPACE"
-    | "REMOVED_FROM_SPACE"
-    | "CARD_CLICKED";
+  type: "MESSAGE" | "ADDED_TO_SPACE" | "REMOVED_FROM_SPACE" | "CARD_CLICKED";
   eventTime: string;
   message?: GoogleChatMessage;
   user?: {

@@ -1,8 +1,8 @@
-import { PubSub, type Message } from "@google-cloud/pubsub";
+import { type Message, PubSub } from "@google-cloud/pubsub";
 import type { ClawdbotConfig } from "../config/config.js";
 import type { RuntimeEnv } from "../runtime.js";
 import type { ResolvedGoogleChatAccount } from "./accounts.js";
-import type { GoogleChatEvent, GoogleChatMessage } from "./types.js";
+import type { GoogleChatEvent } from "./types.js";
 
 export type GoogleChatMonitorOptions = {
   account: ResolvedGoogleChatAccount;
@@ -86,8 +86,8 @@ function checkMessagePolicy(
 ): boolean {
   const policy =
     message.chat.type === "dm"
-      ? account.config.dmPolicy ?? "pairing"
-      : account.config.spacePolicy ?? "disabled";
+      ? (account.config.dmPolicy ?? "pairing")
+      : (account.config.spacePolicy ?? "disabled");
 
   switch (policy) {
     case "disabled":
@@ -157,7 +157,10 @@ export async function monitorGoogleChatProvider(
   };
 
   const errorHandler = (error: Error) => {
-    console.error(`[googlechat:${account.accountId}] Subscription error:`, error);
+    console.error(
+      `[googlechat:${account.accountId}] Subscription error:`,
+      error,
+    );
   };
 
   subscription.on("message", messageHandler);

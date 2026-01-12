@@ -83,7 +83,11 @@ function normalizeMessage(
 
 export async function startGoogleChatWebhookServer(
   options: GoogleChatWebhookOptions,
-): Promise<{ server: ReturnType<typeof express>; port: number; stop: () => void }> {
+): Promise<{
+  server: ReturnType<typeof express>;
+  port: number;
+  stop: () => void;
+}> {
   const { account, port = 18792 } = options;
 
   const app = express();
@@ -91,7 +95,11 @@ export async function startGoogleChatWebhookServer(
 
   // Health check endpoint
   app.get("/health", (_req: Request, res: Response) => {
-    res.json({ ok: true, provider: "googlechat", accountId: account.accountId });
+    res.json({
+      ok: true,
+      provider: "googlechat",
+      accountId: account.accountId,
+    });
   });
 
   // Google Chat webhook endpoint
@@ -99,7 +107,9 @@ export async function startGoogleChatWebhookServer(
     try {
       const event = req.body as GoogleChatEvent;
 
-      console.log(`[googlechat:${account.accountId}] Received event: ${event.type}`);
+      console.log(
+        `[googlechat:${account.accountId}] Received event: ${event.type}`,
+      );
 
       // Handle different event types
       if (event.type === "ADDED_TO_SPACE") {
@@ -142,8 +152,12 @@ export async function startGoogleChatWebhookServer(
 
   // Start server
   const server = app.listen(port, () => {
-    console.log(`[googlechat:${account.accountId}] Webhook server listening on port ${port}`);
-    console.log(`[googlechat:${account.accountId}] Webhook URL: http://localhost:${port}/webhook/googlechat`);
+    console.log(
+      `[googlechat:${account.accountId}] Webhook server listening on port ${port}`,
+    );
+    console.log(
+      `[googlechat:${account.accountId}] Webhook URL: http://localhost:${port}/webhook/googlechat`,
+    );
   });
 
   const stop = () => {
