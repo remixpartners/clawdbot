@@ -1,6 +1,7 @@
 {
   "$schema": "https://mintlify.com/docs.json",
   "name": "OpenClaw",
+  "description": "Self-hosted gateway that connects WhatsApp, Telegram, Discord, iMessage, and more to AI coding agents. Run a single Gateway process on your own machine and message your AI assistant from anywhere.",
   "theme": "mint",
   "icons": {
     "library": "lucide"
@@ -23,6 +24,14 @@
     "dark": "#FF5A36",
     "light": "#FF8A6B"
   },
+  "styling": {
+    "codeblocks": {
+      "theme": {
+        "dark": "min-dark",
+        "light": "min-light"
+      }
+    }
+  },
   "navbar": {
     "links": [
       {
@@ -39,18 +48,6 @@
   },
   "redirects": [
     {
-      "source": "/cron",
-      "destination": "/cron-jobs"
-    },
-    {
-      "source": "/model",
-      "destination": "/models"
-    },
-    {
-      "source": "/model/",
-      "destination": "/models"
-    },
-    {
       "source": "/messages",
       "destination": "/concepts/messages"
     },
@@ -61,6 +58,10 @@
     {
       "source": "/compaction",
       "destination": "/concepts/compaction"
+    },
+    {
+      "source": "/cron",
+      "destination": "/cron-jobs"
     },
     {
       "source": "/minimax",
@@ -97,6 +98,10 @@
     {
       "source": "/opencode",
       "destination": "/providers/opencode"
+    },
+    {
+      "source": "/qianfan",
+      "destination": "/providers/qianfan"
     },
     {
       "source": "/mattermost",
@@ -315,6 +320,10 @@
       "destination": "/install/docker"
     },
     {
+      "source": "/podman",
+      "destination": "/install/podman"
+    },
+    {
       "source": "/doctor",
       "destination": "/gateway/doctor"
     },
@@ -352,11 +361,11 @@
     },
     {
       "source": "/group-messages",
-      "destination": "/concepts/group-messages"
+      "destination": "/channels/group-messages"
     },
     {
       "source": "/groups",
-      "destination": "/concepts/groups"
+      "destination": "/channels/groups"
     },
     {
       "source": "/health",
@@ -483,6 +492,14 @@
       "destination": "/concepts/model-failover"
     },
     {
+      "source": "/model",
+      "destination": "/models"
+    },
+    {
+      "source": "/model/",
+      "destination": "/models"
+    },
+    {
       "source": "/models",
       "destination": "/concepts/models"
     },
@@ -504,7 +521,7 @@
     },
     {
       "source": "/pairing",
-      "destination": "/start/pairing"
+      "destination": "/channels/pairing"
     },
     {
       "source": "/plans/cron-add-hardening",
@@ -528,11 +545,11 @@
     },
     {
       "source": "/provider-routing",
-      "destination": "/concepts/channel-routing"
+      "destination": "/channels/channel-routing"
     },
     {
       "source": "/concepts/provider-routing",
-      "destination": "/concepts/channel-routing"
+      "destination": "/channels/channel-routing"
     },
     {
       "source": "/queue",
@@ -639,6 +656,10 @@
       "destination": "/reference/templates/SOUL"
     },
     {
+      "source": "/templates/SOUL.architect",
+      "destination": "/reference/templates/SOUL.architect"
+    },
+    {
       "source": "/templates/TOOLS",
       "destination": "/reference/templates/TOOLS"
     },
@@ -660,11 +681,11 @@
     },
     {
       "source": "/troubleshooting",
-      "destination": "/gateway/troubleshooting"
+      "destination": "/help/troubleshooting"
     },
     {
-      "source": "/web/tui",
-      "destination": "/tui"
+      "source": "/tui",
+      "destination": "/web/tui"
     },
     {
       "source": "/typebox",
@@ -719,24 +740,64 @@
       "destination": "/concepts/oauth"
     },
     {
+      "source": "/plugin",
+      "destination": "/tools/plugin"
+    },
+    {
       "source": "/plugins",
-      "destination": "/plugin"
+      "destination": "/tools/plugin"
     },
     {
-      "source": "/install/railway",
-      "destination": "/railway"
+      "source": "/railway",
+      "destination": "/install/railway"
     },
     {
-      "source": "/install/northflank",
-      "destination": "/northflank"
+      "source": "/northflank",
+      "destination": "/install/northflank"
     },
     {
-      "source": "/install/northflank/",
-      "destination": "/northflank"
+      "source": "/render",
+      "destination": "/install/render"
     },
     {
       "source": "/gcp",
-      "destination": "/platforms/gcp"
+      "destination": "/install/gcp"
+    },
+    {
+      "source": "/platforms/fly",
+      "destination": "/install/fly"
+    },
+    {
+      "source": "/platforms/hetzner",
+      "destination": "/install/hetzner"
+    },
+    {
+      "source": "/platforms/gcp",
+      "destination": "/install/gcp"
+    },
+    {
+      "source": "/platforms/macos-vm",
+      "destination": "/install/macos-vm"
+    },
+    {
+      "source": "/platforms/exe-dev",
+      "destination": "/install/exe-dev"
+    },
+    {
+      "source": "/platforms/railway",
+      "destination": "/install/railway"
+    },
+    {
+      "source": "/platforms/render",
+      "destination": "/install/render"
+    },
+    {
+      "source": "/platforms/northflank",
+      "destination": "/install/northflank"
+    },
+    {
+      "source": "/gateway/trusted-proxy",
+      "destination": "/gateway/trusted-proxy-auth"
     }
   ],
   "navigation": {
@@ -748,36 +809,28 @@
             "tab": "Get started",
             "groups": [
               {
-                "group": "Overview",
-                "pages": ["index", "concepts/features", "start/showcase", "start/lore"]
+                "group": "Home",
+                "pages": ["index"]
               },
               {
-                "group": "First run",
+                "group": "Overview",
+                "pages": ["start/showcase"]
+              },
+              {
+                "group": "Core concepts",
+                "pages": ["concepts/features"]
+              },
+              {
+                "group": "First steps",
                 "pages": [
                   "start/getting-started",
-                  {
-                    "group": "Onboarding",
-                    "pages": [
-                      {
-                        "group": "CLI onboarding",
-                        "pages": [
-                          "start/wizard",
-                          "start/wizard-cli-reference",
-                          "start/wizard-cli-automation"
-                        ]
-                      },
-                      {
-                        "group": "macOS onboarding",
-                        "pages": ["start/onboarding"]
-                      }
-                    ]
-                  },
-                  "start/bootstrapping",
-                  "start/pairing"
+                  "start/onboarding-overview",
+                  "start/wizard",
+                  "start/onboarding"
                 ]
               },
               {
-                "group": "Use cases",
+                "group": "Guides",
                 "pages": ["start/openclaw"]
               }
             ]
@@ -790,10 +843,10 @@
                 "pages": ["install/index", "install/installer"]
               },
               {
-                "group": "Install methods",
+                "group": "Other install methods",
                 "pages": [
-                  "install/node",
                   "install/docker",
+                  "install/podman",
                   "install/nix",
                   "install/ansible",
                   "install/bun"
@@ -802,6 +855,19 @@
               {
                 "group": "Maintenance",
                 "pages": ["install/updating", "install/migrating", "install/uninstall"]
+              },
+              {
+                "group": "Hosting and deployment",
+                "pages": [
+                  "install/fly",
+                  "install/hetzner",
+                  "install/gcp",
+                  "install/macos-vm",
+                  "install/exe-dev",
+                  "install/railway",
+                  "install/render",
+                  "install/northflank"
+                ]
               },
               {
                 "group": "Advanced",
@@ -821,8 +887,8 @@
                 "pages": [
                   "channels/whatsapp",
                   "channels/telegram",
-                  "channels/grammy",
                   "channels/discord",
+                  "channels/irc",
                   "channels/slack",
                   "channels/feishu",
                   "channels/googlechat",
@@ -839,10 +905,11 @@
               {
                 "group": "Configuration",
                 "pages": [
-                  "concepts/group-messages",
-                  "concepts/groups",
-                  "broadcast-groups",
-                  "concepts/channel-routing",
+                  "channels/pairing",
+                  "channels/group-messages",
+                  "channels/groups",
+                  "channels/broadcast-groups",
+                  "channels/channel-routing",
                   "channels/location",
                   "channels/troubleshooting"
                 ]
@@ -863,6 +930,10 @@
                   "concepts/agent-workspace",
                   "concepts/oauth"
                 ]
+              },
+              {
+                "group": "Bootstrapping",
+                "pages": ["start/bootstrapping"]
               },
               {
                 "group": "Sessions and memory",
@@ -921,27 +992,29 @@
               },
               {
                 "group": "Agent coordination",
-                "pages": ["tools/agent-send", "tools/subagents", "multi-agent-sandbox-tools"]
+                "pages": ["tools/agent-send", "tools/subagents", "tools/multi-agent-sandbox-tools"]
               },
               {
-                "group": "Skills and extensions",
+                "group": "Skills",
                 "pages": [
                   "tools/slash-commands",
                   "tools/skills",
                   "tools/skills-config",
                   "tools/clawhub",
-                  "plugin",
-                  "plugins/voice-call",
-                  "plugins/zalouser"
+                  "tools/plugin"
                 ]
+              },
+              {
+                "group": "Extensions",
+                "pages": ["plugins/voice-call", "plugins/zalouser"]
               },
               {
                 "group": "Automation",
                 "pages": [
-                  "hooks",
-                  "hooks/soul-evil",
+                  "automation/hooks",
                   "automation/cron-jobs",
                   "automation/cron-vs-heartbeat",
+                  "automation/troubleshooting",
                   "automation/webhook",
                   "automation/gmail-pubsub",
                   "automation/poll",
@@ -952,6 +1025,7 @@
                 "group": "Media and devices",
                 "pages": [
                   "nodes/index",
+                  "nodes/troubleshooting",
                   "nodes/images",
                   "nodes/audio",
                   "nodes/camera",
@@ -967,7 +1041,11 @@
             "groups": [
               {
                 "group": "Overview",
-                "pages": ["providers/index", "providers/models", "concepts/models"]
+                "pages": ["providers/index", "providers/models"]
+              },
+              {
+                "group": "Model concepts",
+                "pages": ["concepts/models"]
               },
               {
                 "group": "Configuration",
@@ -979,14 +1057,55 @@
                   "providers/anthropic",
                   "providers/openai",
                   "providers/openrouter",
-                  "bedrock",
+                  "providers/litellm",
+                  "providers/bedrock",
                   "providers/vercel-ai-gateway",
                   "providers/moonshot",
                   "providers/minimax",
                   "providers/opencode",
                   "providers/glm",
                   "providers/zai",
-                  "providers/synthetic"
+                  "providers/synthetic",
+                  "providers/qianfan"
+                ]
+              }
+            ]
+          },
+          {
+            "tab": "Platforms",
+            "groups": [
+              {
+                "group": "Platforms overview",
+                "pages": [
+                  "platforms/index",
+                  "platforms/macos",
+                  "platforms/linux",
+                  "platforms/windows",
+                  "platforms/android",
+                  "platforms/ios"
+                ]
+              },
+              {
+                "group": "macOS companion app",
+                "pages": [
+                  "platforms/mac/dev-setup",
+                  "platforms/mac/menu-bar",
+                  "platforms/mac/voicewake",
+                  "platforms/mac/voice-overlay",
+                  "platforms/mac/webchat",
+                  "platforms/mac/canvas",
+                  "platforms/mac/child-process",
+                  "platforms/mac/health",
+                  "platforms/mac/icon",
+                  "platforms/mac/logging",
+                  "platforms/mac/permissions",
+                  "platforms/mac/remote",
+                  "platforms/mac/signing",
+                  "platforms/mac/release",
+                  "platforms/mac/bundled-gateway",
+                  "platforms/mac/xpc",
+                  "platforms/mac/skills",
+                  "platforms/mac/peekaboo"
                 ]
               }
             ]
@@ -1002,8 +1121,10 @@
                     "group": "Configuration and operations",
                     "pages": [
                       "gateway/configuration",
+                      "gateway/configuration-reference",
                       "gateway/configuration-examples",
                       "gateway/authentication",
+                      "gateway/trusted-proxy-auth",
                       "gateway/health",
                       "gateway/heartbeat",
                       "gateway/doctor",
@@ -1045,20 +1166,8 @@
                 ]
               },
               {
-                "group": "Remote access and deployment",
-                "pages": [
-                  "gateway/remote",
-                  "gateway/remote-gateway-readme",
-                  "gateway/tailscale",
-                  "platforms/fly",
-                  "platforms/hetzner",
-                  "platforms/gcp",
-                  "platforms/macos-vm",
-                  "platforms/exe-dev",
-                  "railway",
-                  "render",
-                  "northflank"
-                ]
+                "group": "Remote access",
+                "pages": ["gateway/remote", "gateway/remote-gateway-readme", "gateway/tailscale"]
               },
               {
                 "group": "Security",
@@ -1066,46 +1175,7 @@
               },
               {
                 "group": "Web interfaces",
-                "pages": ["web/index", "web/control-ui", "web/dashboard", "web/webchat", "tui"]
-              }
-            ]
-          },
-          {
-            "tab": "Platforms",
-            "groups": [
-              {
-                "group": "Platforms overview",
-                "pages": [
-                  "platforms/index",
-                  "platforms/macos",
-                  "platforms/linux",
-                  "platforms/windows",
-                  "platforms/android",
-                  "platforms/ios"
-                ]
-              },
-              {
-                "group": "macOS companion app",
-                "pages": [
-                  "platforms/mac/dev-setup",
-                  "platforms/mac/menu-bar",
-                  "platforms/mac/voicewake",
-                  "platforms/mac/voice-overlay",
-                  "platforms/mac/webchat",
-                  "platforms/mac/canvas",
-                  "platforms/mac/child-process",
-                  "platforms/mac/health",
-                  "platforms/mac/icon",
-                  "platforms/mac/logging",
-                  "platforms/mac/permissions",
-                  "platforms/mac/remote",
-                  "platforms/mac/signing",
-                  "platforms/mac/release",
-                  "platforms/mac/bundled-gateway",
-                  "platforms/mac/xpc",
-                  "platforms/mac/skills",
-                  "platforms/mac/peekaboo"
-                ]
+                "pages": ["web/index", "web/control-ui", "web/dashboard", "web/webchat", "web/tui"]
               }
             ]
           },
@@ -1167,19 +1237,23 @@
                   "reference/templates/HEARTBEAT",
                   "reference/templates/IDENTITY",
                   "reference/templates/SOUL",
+                  "reference/templates/SOUL.architect",
                   "reference/templates/TOOLS",
                   "reference/templates/USER"
                 ]
               },
               {
                 "group": "Technical reference",
+                "pages": ["reference/wizard", "reference/token-use", "channels/grammy"]
+              },
+              {
+                "group": "Concept internals",
                 "pages": [
                   "concepts/typebox",
                   "concepts/markdown-formatting",
                   "concepts/typing-indicators",
                   "concepts/usage-tracking",
-                  "concepts/timezone",
-                  "token-use"
+                  "concepts/timezone"
                 ]
               },
               {
@@ -1189,6 +1263,16 @@
               {
                 "group": "Release notes",
                 "pages": ["reference/RELEASING", "reference/test"]
+              },
+              {
+                "group": "Experiments",
+                "pages": [
+                  "experiments/onboarding-config-protocol",
+                  "experiments/plans/cron-add-hardening",
+                  "experiments/plans/group-policy-hardening",
+                  "experiments/research/memory",
+                  "experiments/proposals/model-config"
+                ]
               }
             ]
           },
@@ -1200,22 +1284,995 @@
                 "pages": ["help/index", "help/troubleshooting", "help/faq"]
               },
               {
-                "group": "Environment and debugging",
-                "pages": [
-                  "environment",
-                  "debugging",
-                  "testing",
-                  "scripts",
-                  "reference/session-management-compaction"
-                ]
+                "group": "Community",
+                "pages": ["start/lore"]
               },
               {
-                "group": "Developer workflows",
+                "group": "Environment and debugging",
+                "pages": ["help/environment", "help/debugging", "help/testing", "help/scripts"]
+              },
+              {
+                "group": "Node runtime",
+                "pages": ["install/node"]
+              },
+              {
+                "group": "Compaction internals",
+                "pages": ["reference/session-management-compaction"]
+              },
+              {
+                "group": "Developer setup",
                 "pages": ["start/setup"]
+              },
+              {
+                "group": "Contributing",
+                "pages": ["ci"]
               },
               {
                 "group": "Docs meta",
                 "pages": ["start/hubs", "start/docs-directory"]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "language": "es",
+        "tabs": [
+          {
+            "tab": "Comenzar",
+            "groups": [
+              {
+                "group": "Overview",
+                "pages": ["es/index", "es/concepts/features", "es/start/showcase", "es/start/lore"]
+              },
+              {
+                "group": "First run",
+                "pages": [
+                  "es/start/getting-started",
+                  {
+                    "group": "Onboarding",
+                    "pages": ["es/start/wizard", "es/start/onboarding", "es/start/bootstrapping"]
+                  },
+                  "es/start/pairing"
+                ]
+              },
+              {
+                "group": "Use cases",
+                "pages": ["es/start/openclaw"]
+              }
+            ]
+          },
+          {
+            "tab": "Instalación",
+            "groups": [
+              {
+                "group": "Install overview",
+                "pages": ["es/install/index", "es/install/installer"]
+              },
+              {
+                "group": "Install methods",
+                "pages": [
+                  "es/install/node",
+                  "es/install/docker",
+                  "es/install/nix",
+                  "es/install/ansible",
+                  "es/install/bun"
+                ]
+              },
+              {
+                "group": "Maintenance",
+                "pages": ["es/install/updating", "es/install/migrating", "es/install/uninstall"]
+              },
+              {
+                "group": "Advanced",
+                "pages": ["es/install/development-channels"]
+              }
+            ]
+          },
+          {
+            "tab": "Canales",
+            "groups": [
+              {
+                "group": "Overview",
+                "pages": ["es/channels/index"]
+              },
+              {
+                "group": "Messaging platforms",
+                "pages": [
+                  "es/channels/whatsapp",
+                  "es/channels/telegram",
+                  "es/channels/grammy",
+                  "es/channels/discord",
+                  "es/channels/slack",
+                  "es/channels/feishu",
+                  "es/channels/googlechat",
+                  "es/channels/mattermost",
+                  "es/channels/signal",
+                  "es/channels/imessage",
+                  "es/channels/msteams",
+                  "es/channels/line",
+                  "es/channels/matrix",
+                  "es/channels/zalo",
+                  "es/channels/zalouser"
+                ]
+              },
+              {
+                "group": "Configuration",
+                "pages": [
+                  "es/concepts/group-messages",
+                  "es/concepts/groups",
+                  "es/broadcast-groups",
+                  "es/concepts/channel-routing",
+                  "es/channels/location",
+                  "es/channels/troubleshooting"
+                ]
+              }
+            ]
+          },
+          {
+            "tab": "Agentes",
+            "groups": [
+              {
+                "group": "Fundamentals",
+                "pages": [
+                  "es/concepts/architecture",
+                  "es/concepts/agent",
+                  "es/concepts/agent-loop",
+                  "es/concepts/system-prompt",
+                  "es/concepts/context",
+                  "es/concepts/agent-workspace",
+                  "es/concepts/oauth"
+                ]
+              },
+              {
+                "group": "Sessions and memory",
+                "pages": [
+                  "es/concepts/session",
+                  "es/concepts/sessions",
+                  "es/concepts/session-pruning",
+                  "es/concepts/session-tool",
+                  "es/concepts/memory",
+                  "es/concepts/compaction"
+                ]
+              },
+              {
+                "group": "Multi-agent",
+                "pages": ["es/concepts/multi-agent", "es/concepts/presence"]
+              },
+              {
+                "group": "Messages and delivery",
+                "pages": [
+                  "es/concepts/messages",
+                  "es/concepts/streaming",
+                  "es/concepts/retry",
+                  "es/concepts/queue"
+                ]
+              }
+            ]
+          },
+          {
+            "tab": "Herramientas",
+            "groups": [
+              {
+                "group": "Overview",
+                "pages": ["es/tools/index"]
+              },
+              {
+                "group": "Built-in tools",
+                "pages": [
+                  "es/tools/lobster",
+                  "es/tools/llm-task",
+                  "es/tools/exec",
+                  "es/tools/web",
+                  "es/tools/apply-patch",
+                  "es/tools/elevated",
+                  "es/tools/thinking",
+                  "es/tools/reactions"
+                ]
+              },
+              {
+                "group": "Browser",
+                "pages": [
+                  "es/tools/browser",
+                  "es/tools/browser-login",
+                  "es/tools/chrome-extension",
+                  "es/tools/browser-linux-troubleshooting"
+                ]
+              },
+              {
+                "group": "Agent coordination",
+                "pages": [
+                  "es/tools/agent-send",
+                  "es/tools/subagents",
+                  "es/multi-agent-sandbox-tools"
+                ]
+              },
+              {
+                "group": "Skills and extensions",
+                "pages": [
+                  "es/tools/slash-commands",
+                  "es/tools/skills",
+                  "es/tools/skills-config",
+                  "es/tools/clawhub",
+                  "es/plugin",
+                  "es/plugins/voice-call",
+                  "es/plugins/zalouser"
+                ]
+              },
+              {
+                "group": "Automation",
+                "pages": [
+                  "es/hooks",
+                  "es/hooks/soul-evil",
+                  "es/automation/cron-jobs",
+                  "es/automation/cron-vs-heartbeat",
+                  "es/automation/webhook",
+                  "es/automation/gmail-pubsub",
+                  "es/automation/poll",
+                  "es/automation/auth-monitoring"
+                ]
+              },
+              {
+                "group": "Media and devices",
+                "pages": [
+                  "es/nodes/index",
+                  "es/nodes/images",
+                  "es/nodes/audio",
+                  "es/nodes/camera",
+                  "es/nodes/talk",
+                  "es/nodes/voicewake",
+                  "es/nodes/location-command"
+                ]
+              }
+            ]
+          },
+          {
+            "tab": "Modelos",
+            "groups": [
+              {
+                "group": "Overview",
+                "pages": ["es/providers/index", "es/providers/models", "es/concepts/models"]
+              },
+              {
+                "group": "Configuration",
+                "pages": ["es/concepts/model-providers", "es/concepts/model-failover"]
+              },
+              {
+                "group": "Providers",
+                "pages": [
+                  "es/providers/anthropic",
+                  "es/providers/openai",
+                  "es/providers/openrouter",
+                  "es/bedrock",
+                  "es/providers/vercel-ai-gateway",
+                  "es/providers/moonshot",
+                  "es/providers/minimax",
+                  "es/providers/opencode",
+                  "es/providers/glm",
+                  "es/providers/zai",
+                  "es/providers/synthetic"
+                ]
+              }
+            ]
+          },
+          {
+            "tab": "Gateway y Operaciones",
+            "groups": [
+              {
+                "group": "Gateway",
+                "pages": [
+                  "es/gateway/index",
+                  {
+                    "group": "Configuration and operations",
+                    "pages": [
+                      "es/gateway/configuration",
+                      "es/gateway/configuration-examples",
+                      "es/gateway/authentication",
+                      "es/gateway/health",
+                      "es/gateway/heartbeat",
+                      "es/gateway/doctor",
+                      "es/gateway/logging",
+                      "es/gateway/gateway-lock",
+                      "es/gateway/background-process",
+                      "es/gateway/multiple-gateways",
+                      "es/gateway/troubleshooting"
+                    ]
+                  },
+                  {
+                    "group": "Security and sandboxing",
+                    "pages": [
+                      "es/gateway/security/index",
+                      "es/gateway/sandboxing",
+                      "es/gateway/sandbox-vs-tool-policy-vs-elevated"
+                    ]
+                  },
+                  {
+                    "group": "Protocols and APIs",
+                    "pages": [
+                      "es/gateway/protocol",
+                      "es/gateway/bridge-protocol",
+                      "es/gateway/openai-http-api",
+                      "es/gateway/tools-invoke-http-api",
+                      "es/gateway/cli-backends",
+                      "es/gateway/local-models"
+                    ]
+                  },
+                  {
+                    "group": "Networking and discovery",
+                    "pages": [
+                      "es/gateway/network-model",
+                      "es/gateway/pairing",
+                      "es/gateway/discovery",
+                      "es/gateway/bonjour"
+                    ]
+                  }
+                ]
+              },
+              {
+                "group": "Remote access and deployment",
+                "pages": [
+                  "es/gateway/remote",
+                  "es/gateway/remote-gateway-readme",
+                  "es/gateway/tailscale",
+                  "es/platforms/fly",
+                  "es/platforms/hetzner",
+                  "es/platforms/gcp",
+                  "es/platforms/macos-vm",
+                  "es/platforms/exe-dev"
+                ]
+              },
+              {
+                "group": "Security",
+                "pages": ["es/security/formal-verification"]
+              },
+              {
+                "group": "Web interfaces",
+                "pages": [
+                  "es/web/index",
+                  "es/web/control-ui",
+                  "es/web/dashboard",
+                  "es/web/webchat",
+                  "es/tui"
+                ]
+              }
+            ]
+          },
+          {
+            "tab": "Plataformas",
+            "groups": [
+              {
+                "group": "Platforms overview",
+                "pages": [
+                  "es/platforms/index",
+                  "es/platforms/macos",
+                  "es/platforms/linux",
+                  "es/platforms/windows",
+                  "es/platforms/android",
+                  "es/platforms/ios"
+                ]
+              },
+              {
+                "group": "macOS companion app",
+                "pages": [
+                  "es/platforms/mac/dev-setup",
+                  "es/platforms/mac/menu-bar",
+                  "es/platforms/mac/voicewake",
+                  "es/platforms/mac/voice-overlay",
+                  "es/platforms/mac/webchat",
+                  "es/platforms/mac/canvas",
+                  "es/platforms/mac/child-process",
+                  "es/platforms/mac/health",
+                  "es/platforms/mac/icon",
+                  "es/platforms/mac/logging",
+                  "es/platforms/mac/permissions",
+                  "es/platforms/mac/remote",
+                  "es/platforms/mac/signing",
+                  "es/platforms/mac/release",
+                  "es/platforms/mac/bundled-gateway",
+                  "es/platforms/mac/xpc",
+                  "es/platforms/mac/skills",
+                  "es/platforms/mac/peekaboo"
+                ]
+              }
+            ]
+          },
+          {
+            "tab": "Referencia",
+            "groups": [
+              {
+                "group": "CLI commands",
+                "pages": [
+                  "es/cli/index",
+                  "es/cli/agent",
+                  "es/cli/agents",
+                  "es/cli/approvals",
+                  "es/cli/browser",
+                  "es/cli/channels",
+                  "es/cli/configure",
+                  "es/cli/cron",
+                  "es/cli/dashboard",
+                  "es/cli/directory",
+                  "es/cli/dns",
+                  "es/cli/docs",
+                  "es/cli/doctor",
+                  "es/cli/gateway",
+                  "es/cli/health",
+                  "es/cli/hooks",
+                  "es/cli/logs",
+                  "es/cli/memory",
+                  "es/cli/message",
+                  "es/cli/models",
+                  "es/cli/nodes",
+                  "es/cli/onboard",
+                  "es/cli/pairing",
+                  "es/cli/plugins",
+                  "es/cli/reset",
+                  "es/cli/sandbox",
+                  "es/cli/security",
+                  "es/cli/sessions",
+                  "es/cli/setup",
+                  "es/cli/skills",
+                  "es/cli/status",
+                  "es/cli/system",
+                  "es/cli/tui",
+                  "es/cli/uninstall",
+                  "es/cli/update",
+                  "es/cli/voicecall"
+                ]
+              },
+              {
+                "group": "RPC and API",
+                "pages": ["es/reference/rpc", "es/reference/device-models"]
+              },
+              {
+                "group": "Templates",
+                "pages": [
+                  "es/reference/AGENTS.default",
+                  "es/reference/templates/AGENTS",
+                  "es/reference/templates/BOOT",
+                  "es/reference/templates/BOOTSTRAP",
+                  "es/reference/templates/HEARTBEAT",
+                  "es/reference/templates/IDENTITY",
+                  "es/reference/templates/SOUL",
+                  "es/reference/templates/TOOLS",
+                  "es/reference/templates/USER"
+                ]
+              },
+              {
+                "group": "Technical reference",
+                "pages": [
+                  "es/concepts/typebox",
+                  "es/concepts/markdown-formatting",
+                  "es/concepts/typing-indicators",
+                  "es/concepts/usage-tracking",
+                  "es/concepts/timezone",
+                  "es/token-use"
+                ]
+              },
+              {
+                "group": "Project",
+                "pages": ["es/reference/credits"]
+              },
+              {
+                "group": "Release notes",
+                "pages": ["es/reference/RELEASING", "es/reference/test"]
+              }
+            ]
+          },
+          {
+            "tab": "Ayuda",
+            "groups": [
+              {
+                "group": "Help",
+                "pages": ["es/help/index", "es/help/troubleshooting", "es/help/faq"]
+              },
+              {
+                "group": "Environment and debugging",
+                "pages": [
+                  "es/environment",
+                  "es/debugging",
+                  "es/testing",
+                  "es/scripts",
+                  "es/reference/session-management-compaction"
+                ]
+              },
+              {
+                "group": "Developer workflows",
+                "pages": ["es/start/setup"]
+              },
+              {
+                "group": "Docs meta",
+                "pages": ["es/start/hubs", "es/start/docs-directory"]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "language": "pt-BR",
+        "tabs": [
+          {
+            "tab": "Começar",
+            "groups": [
+              {
+                "group": "Overview",
+                "pages": [
+                  "pt-BR/index",
+                  "pt-BR/concepts/features",
+                  "pt-BR/start/showcase",
+                  "pt-BR/start/lore"
+                ]
+              },
+              {
+                "group": "First run",
+                "pages": [
+                  "pt-BR/start/getting-started",
+                  {
+                    "group": "Onboarding",
+                    "pages": [
+                      "pt-BR/start/wizard",
+                      "pt-BR/start/onboarding",
+                      "pt-BR/start/bootstrapping"
+                    ]
+                  },
+                  "pt-BR/start/pairing"
+                ]
+              },
+              {
+                "group": "Use cases",
+                "pages": ["pt-BR/start/openclaw"]
+              }
+            ]
+          },
+          {
+            "tab": "Instalação",
+            "groups": [
+              {
+                "group": "Install overview",
+                "pages": ["pt-BR/install/index", "pt-BR/install/installer"]
+              },
+              {
+                "group": "Install methods",
+                "pages": [
+                  "pt-BR/install/node",
+                  "pt-BR/install/docker",
+                  "pt-BR/install/nix",
+                  "pt-BR/install/ansible",
+                  "pt-BR/install/bun"
+                ]
+              },
+              {
+                "group": "Maintenance",
+                "pages": [
+                  "pt-BR/install/updating",
+                  "pt-BR/install/migrating",
+                  "pt-BR/install/uninstall"
+                ]
+              },
+              {
+                "group": "Advanced",
+                "pages": ["pt-BR/install/development-channels"]
+              }
+            ]
+          },
+          {
+            "tab": "Canais",
+            "groups": [
+              {
+                "group": "Overview",
+                "pages": ["pt-BR/channels/index"]
+              },
+              {
+                "group": "Messaging platforms",
+                "pages": [
+                  "pt-BR/channels/whatsapp",
+                  "pt-BR/channels/telegram",
+                  "pt-BR/channels/grammy",
+                  "pt-BR/channels/discord",
+                  "pt-BR/channels/slack",
+                  "pt-BR/channels/feishu",
+                  "pt-BR/channels/googlechat",
+                  "pt-BR/channels/mattermost",
+                  "pt-BR/channels/signal",
+                  "pt-BR/channels/imessage",
+                  "pt-BR/channels/msteams",
+                  "pt-BR/channels/line",
+                  "pt-BR/channels/matrix",
+                  "pt-BR/channels/zalo",
+                  "pt-BR/channels/zalouser"
+                ]
+              },
+              {
+                "group": "Configuration",
+                "pages": [
+                  "pt-BR/concepts/group-messages",
+                  "pt-BR/concepts/groups",
+                  "pt-BR/broadcast-groups",
+                  "pt-BR/concepts/channel-routing",
+                  "pt-BR/channels/location",
+                  "pt-BR/channels/troubleshooting"
+                ]
+              }
+            ]
+          },
+          {
+            "tab": "Agentes",
+            "groups": [
+              {
+                "group": "Fundamentals",
+                "pages": [
+                  "pt-BR/concepts/architecture",
+                  "pt-BR/concepts/agent",
+                  "pt-BR/concepts/agent-loop",
+                  "pt-BR/concepts/system-prompt",
+                  "pt-BR/concepts/context",
+                  "pt-BR/concepts/agent-workspace",
+                  "pt-BR/concepts/oauth"
+                ]
+              },
+              {
+                "group": "Sessions and memory",
+                "pages": [
+                  "pt-BR/concepts/session",
+                  "pt-BR/concepts/sessions",
+                  "pt-BR/concepts/session-pruning",
+                  "pt-BR/concepts/session-tool",
+                  "pt-BR/concepts/memory",
+                  "pt-BR/concepts/compaction"
+                ]
+              },
+              {
+                "group": "Multi-agent",
+                "pages": ["pt-BR/concepts/multi-agent", "pt-BR/concepts/presence"]
+              },
+              {
+                "group": "Messages and delivery",
+                "pages": [
+                  "pt-BR/concepts/messages",
+                  "pt-BR/concepts/streaming",
+                  "pt-BR/concepts/retry",
+                  "pt-BR/concepts/queue"
+                ]
+              }
+            ]
+          },
+          {
+            "tab": "Ferramentas",
+            "groups": [
+              {
+                "group": "Overview",
+                "pages": ["pt-BR/tools/index"]
+              },
+              {
+                "group": "Built-in tools",
+                "pages": [
+                  "pt-BR/tools/lobster",
+                  "pt-BR/tools/llm-task",
+                  "pt-BR/tools/exec",
+                  "pt-BR/tools/web",
+                  "pt-BR/tools/apply-patch",
+                  "pt-BR/tools/elevated",
+                  "pt-BR/tools/thinking",
+                  "pt-BR/tools/reactions"
+                ]
+              },
+              {
+                "group": "Browser",
+                "pages": [
+                  "pt-BR/tools/browser",
+                  "pt-BR/tools/browser-login",
+                  "pt-BR/tools/chrome-extension",
+                  "pt-BR/tools/browser-linux-troubleshooting"
+                ]
+              },
+              {
+                "group": "Agent coordination",
+                "pages": [
+                  "pt-BR/tools/agent-send",
+                  "pt-BR/tools/subagents",
+                  "pt-BR/multi-agent-sandbox-tools"
+                ]
+              },
+              {
+                "group": "Skills and extensions",
+                "pages": [
+                  "pt-BR/tools/slash-commands",
+                  "pt-BR/tools/skills",
+                  "pt-BR/tools/skills-config",
+                  "pt-BR/tools/clawhub",
+                  "pt-BR/plugin",
+                  "pt-BR/plugins/voice-call",
+                  "pt-BR/plugins/zalouser"
+                ]
+              },
+              {
+                "group": "Automation",
+                "pages": [
+                  "pt-BR/hooks",
+                  "pt-BR/hooks/soul-evil",
+                  "pt-BR/automation/cron-jobs",
+                  "pt-BR/automation/cron-vs-heartbeat",
+                  "pt-BR/automation/webhook",
+                  "pt-BR/automation/gmail-pubsub",
+                  "pt-BR/automation/poll",
+                  "pt-BR/automation/auth-monitoring"
+                ]
+              },
+              {
+                "group": "Media and devices",
+                "pages": [
+                  "pt-BR/nodes/index",
+                  "pt-BR/nodes/images",
+                  "pt-BR/nodes/audio",
+                  "pt-BR/nodes/camera",
+                  "pt-BR/nodes/talk",
+                  "pt-BR/nodes/voicewake",
+                  "pt-BR/nodes/location-command"
+                ]
+              }
+            ]
+          },
+          {
+            "tab": "Modelos",
+            "groups": [
+              {
+                "group": "Overview",
+                "pages": [
+                  "pt-BR/providers/index",
+                  "pt-BR/providers/models",
+                  "pt-BR/concepts/models"
+                ]
+              },
+              {
+                "group": "Configuration",
+                "pages": ["pt-BR/concepts/model-providers", "pt-BR/concepts/model-failover"]
+              },
+              {
+                "group": "Providers",
+                "pages": [
+                  "pt-BR/providers/anthropic",
+                  "pt-BR/providers/openai",
+                  "pt-BR/providers/openrouter",
+                  "pt-BR/bedrock",
+                  "pt-BR/providers/vercel-ai-gateway",
+                  "pt-BR/providers/moonshot",
+                  "pt-BR/providers/minimax",
+                  "pt-BR/providers/opencode",
+                  "pt-BR/providers/glm",
+                  "pt-BR/providers/zai",
+                  "pt-BR/providers/synthetic"
+                ]
+              }
+            ]
+          },
+          {
+            "tab": "Gateway e Operações",
+            "groups": [
+              {
+                "group": "Gateway",
+                "pages": [
+                  "pt-BR/gateway/index",
+                  {
+                    "group": "Configuration and operations",
+                    "pages": [
+                      "pt-BR/gateway/configuration",
+                      "pt-BR/gateway/configuration-examples",
+                      "pt-BR/gateway/authentication",
+                      "pt-BR/gateway/health",
+                      "pt-BR/gateway/heartbeat",
+                      "pt-BR/gateway/doctor",
+                      "pt-BR/gateway/logging",
+                      "pt-BR/gateway/gateway-lock",
+                      "pt-BR/gateway/background-process",
+                      "pt-BR/gateway/multiple-gateways",
+                      "pt-BR/gateway/troubleshooting"
+                    ]
+                  },
+                  {
+                    "group": "Security and sandboxing",
+                    "pages": [
+                      "pt-BR/gateway/security/index",
+                      "pt-BR/gateway/sandboxing",
+                      "pt-BR/gateway/sandbox-vs-tool-policy-vs-elevated"
+                    ]
+                  },
+                  {
+                    "group": "Protocols and APIs",
+                    "pages": [
+                      "pt-BR/gateway/protocol",
+                      "pt-BR/gateway/bridge-protocol",
+                      "pt-BR/gateway/openai-http-api",
+                      "pt-BR/gateway/tools-invoke-http-api",
+                      "pt-BR/gateway/cli-backends",
+                      "pt-BR/gateway/local-models"
+                    ]
+                  },
+                  {
+                    "group": "Networking and discovery",
+                    "pages": [
+                      "pt-BR/gateway/network-model",
+                      "pt-BR/gateway/pairing",
+                      "pt-BR/gateway/discovery",
+                      "pt-BR/gateway/bonjour"
+                    ]
+                  }
+                ]
+              },
+              {
+                "group": "Remote access and deployment",
+                "pages": [
+                  "pt-BR/gateway/remote",
+                  "pt-BR/gateway/remote-gateway-readme",
+                  "pt-BR/gateway/tailscale",
+                  "pt-BR/platforms/fly",
+                  "pt-BR/platforms/hetzner",
+                  "pt-BR/platforms/gcp",
+                  "pt-BR/platforms/macos-vm",
+                  "pt-BR/platforms/exe-dev"
+                ]
+              },
+              {
+                "group": "Security",
+                "pages": ["pt-BR/security/formal-verification"]
+              },
+              {
+                "group": "Web interfaces",
+                "pages": [
+                  "pt-BR/web/index",
+                  "pt-BR/web/control-ui",
+                  "pt-BR/web/dashboard",
+                  "pt-BR/web/webchat",
+                  "pt-BR/tui"
+                ]
+              }
+            ]
+          },
+          {
+            "tab": "Plataformas",
+            "groups": [
+              {
+                "group": "Platforms overview",
+                "pages": [
+                  "pt-BR/platforms/index",
+                  "pt-BR/platforms/macos",
+                  "pt-BR/platforms/linux",
+                  "pt-BR/platforms/windows",
+                  "pt-BR/platforms/android",
+                  "pt-BR/platforms/ios"
+                ]
+              },
+              {
+                "group": "macOS companion app",
+                "pages": [
+                  "pt-BR/platforms/mac/dev-setup",
+                  "pt-BR/platforms/mac/menu-bar",
+                  "pt-BR/platforms/mac/voicewake",
+                  "pt-BR/platforms/mac/voice-overlay",
+                  "pt-BR/platforms/mac/webchat",
+                  "pt-BR/platforms/mac/canvas",
+                  "pt-BR/platforms/mac/child-process",
+                  "pt-BR/platforms/mac/health",
+                  "pt-BR/platforms/mac/icon",
+                  "pt-BR/platforms/mac/logging",
+                  "pt-BR/platforms/mac/permissions",
+                  "pt-BR/platforms/mac/remote",
+                  "pt-BR/platforms/mac/signing",
+                  "pt-BR/platforms/mac/release",
+                  "pt-BR/platforms/mac/bundled-gateway",
+                  "pt-BR/platforms/mac/xpc",
+                  "pt-BR/platforms/mac/skills",
+                  "pt-BR/platforms/mac/peekaboo"
+                ]
+              }
+            ]
+          },
+          {
+            "tab": "Referência",
+            "groups": [
+              {
+                "group": "CLI commands",
+                "pages": [
+                  "pt-BR/cli/index",
+                  "pt-BR/cli/agent",
+                  "pt-BR/cli/agents",
+                  "pt-BR/cli/approvals",
+                  "pt-BR/cli/browser",
+                  "pt-BR/cli/channels",
+                  "pt-BR/cli/configure",
+                  "pt-BR/cli/cron",
+                  "pt-BR/cli/dashboard",
+                  "pt-BR/cli/directory",
+                  "pt-BR/cli/dns",
+                  "pt-BR/cli/docs",
+                  "pt-BR/cli/doctor",
+                  "pt-BR/cli/gateway",
+                  "pt-BR/cli/health",
+                  "pt-BR/cli/hooks",
+                  "pt-BR/cli/logs",
+                  "pt-BR/cli/memory",
+                  "pt-BR/cli/message",
+                  "pt-BR/cli/models",
+                  "pt-BR/cli/nodes",
+                  "pt-BR/cli/onboard",
+                  "pt-BR/cli/pairing",
+                  "pt-BR/cli/plugins",
+                  "pt-BR/cli/reset",
+                  "pt-BR/cli/sandbox",
+                  "pt-BR/cli/security",
+                  "pt-BR/cli/sessions",
+                  "pt-BR/cli/setup",
+                  "pt-BR/cli/skills",
+                  "pt-BR/cli/status",
+                  "pt-BR/cli/system",
+                  "pt-BR/cli/tui",
+                  "pt-BR/cli/uninstall",
+                  "pt-BR/cli/update",
+                  "pt-BR/cli/voicecall"
+                ]
+              },
+              {
+                "group": "RPC and API",
+                "pages": ["pt-BR/reference/rpc", "pt-BR/reference/device-models"]
+              },
+              {
+                "group": "Templates",
+                "pages": [
+                  "pt-BR/reference/AGENTS.default",
+                  "pt-BR/reference/templates/AGENTS",
+                  "pt-BR/reference/templates/BOOT",
+                  "pt-BR/reference/templates/BOOTSTRAP",
+                  "pt-BR/reference/templates/HEARTBEAT",
+                  "pt-BR/reference/templates/IDENTITY",
+                  "pt-BR/reference/templates/SOUL",
+                  "pt-BR/reference/templates/TOOLS",
+                  "pt-BR/reference/templates/USER"
+                ]
+              },
+              {
+                "group": "Technical reference",
+                "pages": [
+                  "pt-BR/concepts/typebox",
+                  "pt-BR/concepts/markdown-formatting",
+                  "pt-BR/concepts/typing-indicators",
+                  "pt-BR/concepts/usage-tracking",
+                  "pt-BR/concepts/timezone",
+                  "pt-BR/token-use"
+                ]
+              },
+              {
+                "group": "Project",
+                "pages": ["pt-BR/reference/credits"]
+              },
+              {
+                "group": "Release notes",
+                "pages": ["pt-BR/reference/RELEASING", "pt-BR/reference/test"]
+              }
+            ]
+          },
+          {
+            "tab": "Ajuda",
+            "groups": [
+              {
+                "group": "Help",
+                "pages": ["pt-BR/help/index", "pt-BR/help/troubleshooting", "pt-BR/help/faq"]
+              },
+              {
+                "group": "Environment and debugging",
+                "pages": [
+                  "pt-BR/environment",
+                  "pt-BR/debugging",
+                  "pt-BR/testing",
+                  "pt-BR/scripts",
+                  "pt-BR/reference/session-management-compaction"
+                ]
+              },
+              {
+                "group": "Developer workflows",
+                "pages": ["pt-BR/start/setup"]
+              },
+              {
+                "group": "Docs meta",
+                "pages": ["pt-BR/start/hubs", "pt-BR/start/docs-directory"]
               }
             ]
           }
@@ -1228,27 +2285,27 @@
             "tab": "快速开始",
             "groups": [
               {
-                "group": "概览",
-                "pages": [
-                  "zh-CN/index",
-                  "zh-CN/concepts/features",
-                  "zh-CN/start/showcase",
-                  "zh-CN/start/lore"
-                ]
+                "group": "首页",
+                "pages": ["zh-CN/index"]
               },
               {
-                "group": "首次运行",
+                "group": "概览",
+                "pages": ["zh-CN/start/showcase"]
+              },
+              {
+                "group": "核心概念",
+                "pages": ["zh-CN/concepts/features"]
+              },
+              {
+                "group": "第一步",
                 "pages": [
                   "zh-CN/start/getting-started",
-                  {
-                    "group": "新手引导",
-                    "pages": ["zh-CN/start/wizard", "zh-CN/start/onboarding"]
-                  },
-                  "zh-CN/start/pairing"
+                  "zh-CN/start/wizard",
+                  "zh-CN/start/onboarding"
                 ]
               },
               {
-                "group": "使用场景",
+                "group": "指南",
                 "pages": ["zh-CN/start/openclaw"]
               }
             ]
@@ -1263,7 +2320,6 @@
               {
                 "group": "安装方式",
                 "pages": [
-                  "zh-CN/install/node",
                   "zh-CN/install/docker",
                   "zh-CN/install/nix",
                   "zh-CN/install/ansible",
@@ -1276,6 +2332,19 @@
                   "zh-CN/install/updating",
                   "zh-CN/install/migrating",
                   "zh-CN/install/uninstall"
+                ]
+              },
+              {
+                "group": "托管与部署",
+                "pages": [
+                  "zh-CN/install/fly",
+                  "zh-CN/install/hetzner",
+                  "zh-CN/install/gcp",
+                  "zh-CN/install/macos-vm",
+                  "zh-CN/install/exe-dev",
+                  "zh-CN/install/railway",
+                  "zh-CN/install/render",
+                  "zh-CN/install/northflank"
                 ]
               },
               {
@@ -1296,7 +2365,6 @@
                 "pages": [
                   "zh-CN/channels/whatsapp",
                   "zh-CN/channels/telegram",
-                  "zh-CN/channels/grammy",
                   "zh-CN/channels/discord",
                   "zh-CN/channels/slack",
                   "zh-CN/channels/feishu",
@@ -1314,10 +2382,11 @@
               {
                 "group": "配置",
                 "pages": [
-                  "zh-CN/concepts/group-messages",
-                  "zh-CN/concepts/groups",
-                  "zh-CN/broadcast-groups",
-                  "zh-CN/concepts/channel-routing",
+                  "zh-CN/channels/pairing",
+                  "zh-CN/channels/group-messages",
+                  "zh-CN/channels/groups",
+                  "zh-CN/channels/broadcast-groups",
+                  "zh-CN/channels/channel-routing",
                   "zh-CN/channels/location",
                   "zh-CN/channels/troubleshooting"
                 ]
@@ -1338,6 +2407,10 @@
                   "zh-CN/concepts/agent-workspace",
                   "zh-CN/concepts/oauth"
                 ]
+              },
+              {
+                "group": "引导",
+                "pages": ["zh-CN/start/bootstrapping"]
               },
               {
                 "group": "会话与记忆",
@@ -1399,28 +2472,30 @@
                 "pages": [
                   "zh-CN/tools/agent-send",
                   "zh-CN/tools/subagents",
-                  "zh-CN/multi-agent-sandbox-tools"
+                  "zh-CN/tools/multi-agent-sandbox-tools"
                 ]
               },
               {
-                "group": "技能与扩展",
+                "group": "技能",
                 "pages": [
                   "zh-CN/tools/slash-commands",
                   "zh-CN/tools/skills",
                   "zh-CN/tools/skills-config",
                   "zh-CN/tools/clawhub",
-                  "zh-CN/plugin",
-                  "zh-CN/plugins/voice-call",
-                  "zh-CN/plugins/zalouser"
+                  "zh-CN/tools/plugin"
                 ]
+              },
+              {
+                "group": "扩展",
+                "pages": ["zh-CN/plugins/voice-call", "zh-CN/plugins/zalouser"]
               },
               {
                 "group": "自动化",
                 "pages": [
-                  "zh-CN/hooks",
-                  "zh-CN/hooks/soul-evil",
+                  "zh-CN/automation/hooks",
                   "zh-CN/automation/cron-jobs",
                   "zh-CN/automation/cron-vs-heartbeat",
+                  "zh-CN/automation/troubleshooting",
                   "zh-CN/automation/webhook",
                   "zh-CN/automation/gmail-pubsub",
                   "zh-CN/automation/poll",
@@ -1431,6 +2506,7 @@
                 "group": "媒体与设备",
                 "pages": [
                   "zh-CN/nodes/index",
+                  "zh-CN/nodes/troubleshooting",
                   "zh-CN/nodes/images",
                   "zh-CN/nodes/audio",
                   "zh-CN/nodes/camera",
@@ -1446,11 +2522,11 @@
             "groups": [
               {
                 "group": "概览",
-                "pages": [
-                  "zh-CN/providers/index",
-                  "zh-CN/providers/models",
-                  "zh-CN/concepts/models"
-                ]
+                "pages": ["zh-CN/providers/index", "zh-CN/providers/models"]
+              },
+              {
+                "group": "模型概念",
+                "pages": ["zh-CN/concepts/models"]
               },
               {
                 "group": "配置",
@@ -1462,14 +2538,54 @@
                   "zh-CN/providers/anthropic",
                   "zh-CN/providers/openai",
                   "zh-CN/providers/openrouter",
-                  "zh-CN/bedrock",
+                  "zh-CN/providers/bedrock",
                   "zh-CN/providers/vercel-ai-gateway",
                   "zh-CN/providers/moonshot",
                   "zh-CN/providers/minimax",
                   "zh-CN/providers/opencode",
                   "zh-CN/providers/glm",
                   "zh-CN/providers/zai",
-                  "zh-CN/providers/synthetic"
+                  "zh-CN/providers/synthetic",
+                  "zh-CN/providers/qianfan"
+                ]
+              }
+            ]
+          },
+          {
+            "tab": "平台",
+            "groups": [
+              {
+                "group": "平台概览",
+                "pages": [
+                  "zh-CN/platforms/index",
+                  "zh-CN/platforms/macos",
+                  "zh-CN/platforms/linux",
+                  "zh-CN/platforms/windows",
+                  "zh-CN/platforms/android",
+                  "zh-CN/platforms/ios"
+                ]
+              },
+              {
+                "group": "macOS 配套应用",
+                "pages": [
+                  "zh-CN/platforms/mac/dev-setup",
+                  "zh-CN/platforms/mac/menu-bar",
+                  "zh-CN/platforms/mac/voicewake",
+                  "zh-CN/platforms/mac/voice-overlay",
+                  "zh-CN/platforms/mac/webchat",
+                  "zh-CN/platforms/mac/canvas",
+                  "zh-CN/platforms/mac/child-process",
+                  "zh-CN/platforms/mac/health",
+                  "zh-CN/platforms/mac/icon",
+                  "zh-CN/platforms/mac/logging",
+                  "zh-CN/platforms/mac/permissions",
+                  "zh-CN/platforms/mac/remote",
+                  "zh-CN/platforms/mac/signing",
+                  "zh-CN/platforms/mac/release",
+                  "zh-CN/platforms/mac/bundled-gateway",
+                  "zh-CN/platforms/mac/xpc",
+                  "zh-CN/platforms/mac/skills",
+                  "zh-CN/platforms/mac/peekaboo"
                 ]
               }
             ]
@@ -1528,19 +2644,11 @@
                 ]
               },
               {
-                "group": "远程访问与部署",
+                "group": "远程访问",
                 "pages": [
                   "zh-CN/gateway/remote",
                   "zh-CN/gateway/remote-gateway-readme",
-                  "zh-CN/gateway/tailscale",
-                  "zh-CN/platforms/fly",
-                  "zh-CN/platforms/hetzner",
-                  "zh-CN/platforms/gcp",
-                  "zh-CN/platforms/macos-vm",
-                  "zh-CN/platforms/exe-dev",
-                  "zh-CN/railway",
-                  "zh-CN/render",
-                  "zh-CN/northflank"
+                  "zh-CN/gateway/tailscale"
                 ]
               },
               {
@@ -1554,46 +2662,7 @@
                   "zh-CN/web/control-ui",
                   "zh-CN/web/dashboard",
                   "zh-CN/web/webchat",
-                  "zh-CN/tui"
-                ]
-              }
-            ]
-          },
-          {
-            "tab": "平台",
-            "groups": [
-              {
-                "group": "平台概览",
-                "pages": [
-                  "zh-CN/platforms/index",
-                  "zh-CN/platforms/macos",
-                  "zh-CN/platforms/linux",
-                  "zh-CN/platforms/windows",
-                  "zh-CN/platforms/android",
-                  "zh-CN/platforms/ios"
-                ]
-              },
-              {
-                "group": "macOS 配套应用",
-                "pages": [
-                  "zh-CN/platforms/mac/dev-setup",
-                  "zh-CN/platforms/mac/menu-bar",
-                  "zh-CN/platforms/mac/voicewake",
-                  "zh-CN/platforms/mac/voice-overlay",
-                  "zh-CN/platforms/mac/webchat",
-                  "zh-CN/platforms/mac/canvas",
-                  "zh-CN/platforms/mac/child-process",
-                  "zh-CN/platforms/mac/health",
-                  "zh-CN/platforms/mac/icon",
-                  "zh-CN/platforms/mac/logging",
-                  "zh-CN/platforms/mac/permissions",
-                  "zh-CN/platforms/mac/remote",
-                  "zh-CN/platforms/mac/signing",
-                  "zh-CN/platforms/mac/release",
-                  "zh-CN/platforms/mac/bundled-gateway",
-                  "zh-CN/platforms/mac/xpc",
-                  "zh-CN/platforms/mac/skills",
-                  "zh-CN/platforms/mac/peekaboo"
+                  "zh-CN/web/tui"
                 ]
               }
             ]
@@ -1662,13 +2731,16 @@
               },
               {
                 "group": "技术参考",
+                "pages": ["zh-CN/reference/wizard", "zh-CN/reference/token-use"]
+              },
+              {
+                "group": "概念内部机制",
                 "pages": [
                   "zh-CN/concepts/typebox",
                   "zh-CN/concepts/markdown-formatting",
                   "zh-CN/concepts/typing-indicators",
                   "zh-CN/concepts/usage-tracking",
-                  "zh-CN/concepts/timezone",
-                  "zh-CN/token-use"
+                  "zh-CN/concepts/timezone"
                 ]
               },
               {
@@ -1678,6 +2750,16 @@
               {
                 "group": "发布说明",
                 "pages": ["zh-CN/reference/RELEASING", "zh-CN/reference/test"]
+              },
+              {
+                "group": "实验性功能",
+                "pages": [
+                  "zh-CN/experiments/onboarding-config-protocol",
+                  "zh-CN/experiments/plans/cron-add-hardening",
+                  "zh-CN/experiments/plans/group-policy-hardening",
+                  "zh-CN/experiments/research/memory",
+                  "zh-CN/experiments/proposals/model-config"
+                ]
               }
             ]
           },
@@ -1689,22 +2771,51 @@
                 "pages": ["zh-CN/help/index", "zh-CN/help/troubleshooting", "zh-CN/help/faq"]
               },
               {
+                "group": "社区",
+                "pages": ["zh-CN/start/lore"]
+              },
+              {
                 "group": "环境与调试",
                 "pages": [
-                  "zh-CN/environment",
-                  "zh-CN/debugging",
-                  "zh-CN/testing",
-                  "zh-CN/scripts",
-                  "zh-CN/reference/session-management-compaction"
+                  "zh-CN/help/environment",
+                  "zh-CN/help/debugging",
+                  "zh-CN/help/testing",
+                  "zh-CN/help/scripts"
                 ]
               },
               {
-                "group": "开发者工作流",
+                "group": "Node 运行时",
+                "pages": ["zh-CN/install/node"]
+              },
+              {
+                "group": "压缩机制内部参考",
+                "pages": ["zh-CN/reference/session-management-compaction"]
+              },
+              {
+                "group": "开发者设置",
                 "pages": ["zh-CN/start/setup"]
               },
               {
                 "group": "文档元信息",
                 "pages": ["zh-CN/start/hubs", "zh-CN/start/docs-directory"]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "language": "ja",
+        "tabs": [
+          {
+            "tab": "はじめに",
+            "groups": [
+              {
+                "group": "概要",
+                "pages": ["ja-JP/index"]
+              },
+              {
+                "group": "初回セットアップ",
+                "pages": ["ja-JP/start/getting-started", "ja-JP/start/wizard"]
               }
             ]
           }

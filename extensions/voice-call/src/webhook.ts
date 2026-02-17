@@ -1,15 +1,20 @@
 import { spawn } from "node:child_process";
 import http from "node:http";
 import { URL } from "node:url";
+import {
+  isRequestBodyLimitError,
+  readRequestBodyWithLimit,
+  requestBodyErrorToText,
+} from "openclaw/plugin-sdk";
 import type { VoiceCallConfig } from "./config.js";
 import type { CoreConfig } from "./core-bridge.js";
 import type { CallManager } from "./manager.js";
 import type { MediaStreamConfig } from "./media-stream.js";
+import { MediaStreamHandler } from "./media-stream.js";
 import type { VoiceCallProvider } from "./providers/base.js";
+import { OpenAIRealtimeSTTProvider } from "./providers/stt-openai-realtime.js";
 import type { TwilioProvider } from "./providers/twilio.js";
 import type { NormalizedEvent, WebhookContext } from "./types.js";
-import { MediaStreamHandler } from "./media-stream.js";
-import { OpenAIRealtimeSTTProvider } from "./providers/stt-openai-realtime.js";
 
 const MAX_WEBHOOK_BODY_BYTES = 1024 * 1024;
 
@@ -23,6 +28,7 @@ export class VoiceCallWebhookServer {
   private manager: CallManager;
   private provider: VoiceCallProvider;
   private coreConfig: CoreConfig | null;
+  private staleCallReaperInterval: ReturnType<typeof setInterval> | null = null;
 
   /** Media stream handler for bidirectional audio (when streaming enabled) */
   private mediaStreamHandler: MediaStreamHandler | null = null;
@@ -136,16 +142,56 @@ export class VoiceCallWebhookServer {
           (this.provider as TwilioProvider).registerCallStream(callId, streamSid);
         }
 
-        // Speak initial message if one was provided when call was initiated
-        // Use setTimeout to allow stream setup to complete
-        setTimeout(() => {
-          this.manager.speakInitialMessage(callId).catch((err) => {
-            console.warn(`[voice-call] Failed to speak initial message:`, err);
-          });
-        }, 500);
+        // Try instant cached greeting for inbound calls (pre-generated at startup)
+        const cachedAudio =
+          this.provider.name === "twilio"
+            ? (this.provider as TwilioProvider).getCachedGreetingAudio()
+            : null;
+        const call = this.manager.getCallByProviderCallId(callId);
+        if (cachedAudio && call?.metadata?.initialMessage && call.direction === "inbound") {
+          console.log(`[voice-call] Playing cached greeting (${cachedAudio.length} bytes)`);
+          // Clear initialMessage to prevent re-speaking via the fallback path.
+          // Note: this in-memory mutation is not persisted to disk, which is acceptable
+          // because a gateway restart would also sever the media stream, making replay moot.
+          delete call.metadata.initialMessage;
+          const handler = this.mediaStreamHandler!;
+          const CHUNK_SIZE = 160;
+          const CHUNK_DELAY_MS = 20;
+          void (async () => {
+            const { chunkAudio } = await import("./telephony-audio.js");
+            await handler.queueTts(streamSid, async (signal) => {
+              for (const chunk of chunkAudio(cachedAudio, CHUNK_SIZE)) {
+                if (signal.aborted) break;
+                handler.sendAudio(streamSid, chunk);
+                await new Promise((r) => setTimeout(r, CHUNK_DELAY_MS));
+              }
+              if (!signal.aborted) {
+                handler.sendMark(streamSid, `greeting-${Date.now()}`);
+              }
+            });
+          })().catch((err) => console.warn("[voice-call] Cached greeting playback failed:", err));
+        } else {
+          // Fallback: original path with reduced delay
+          setTimeout(() => {
+            this.manager.speakInitialMessage(callId).catch((err) => {
+              console.warn(`[voice-call] Failed to speak initial message:`, err);
+            });
+          }, 100);
+        }
       },
       onDisconnect: (callId) => {
         console.log(`[voice-call] Media stream disconnected: ${callId}`);
+        // Auto-end call when media stream disconnects to prevent stuck calls.
+        // Without this, calls can remain active indefinitely after the stream closes.
+        const disconnectedCall = this.manager.getCallByProviderCallId(callId);
+        if (disconnectedCall) {
+          console.log(
+            `[voice-call] Auto-ending call ${disconnectedCall.callId} on stream disconnect`,
+          );
+          void this.manager.endCall(disconnectedCall.callId).catch((err) => {
+            console.warn(`[voice-call] Failed to auto-end call ${disconnectedCall.callId}:`, err);
+          });
+        }
         if (this.provider.name === "twilio") {
           (this.provider as TwilioProvider).unregisterCallStream(callId);
         }
@@ -195,14 +241,51 @@ export class VoiceCallWebhookServer {
           console.log(`[voice-call] Media stream WebSocket on ws://${bind}:${port}${streamPath}`);
         }
         resolve(url);
+
+        // Start the stale call reaper if configured
+        this.startStaleCallReaper();
       });
     });
+  }
+
+  /**
+   * Start a periodic reaper that ends calls older than the configured threshold.
+   * Catches calls stuck in unexpected states (e.g., notify-mode calls that never
+   * receive a terminal webhook from the provider).
+   */
+  private startStaleCallReaper(): void {
+    const maxAgeSeconds = this.config.staleCallReaperSeconds;
+    if (!maxAgeSeconds || maxAgeSeconds <= 0) {
+      return;
+    }
+
+    const CHECK_INTERVAL_MS = 30_000; // Check every 30 seconds
+    const maxAgeMs = maxAgeSeconds * 1000;
+
+    this.staleCallReaperInterval = setInterval(() => {
+      const now = Date.now();
+      for (const call of this.manager.getActiveCalls()) {
+        const age = now - call.startedAt;
+        if (age > maxAgeMs) {
+          console.log(
+            `[voice-call] Reaping stale call ${call.callId} (age: ${Math.round(age / 1000)}s, state: ${call.state})`,
+          );
+          void this.manager.endCall(call.callId).catch((err) => {
+            console.warn(`[voice-call] Reaper failed to end call ${call.callId}:`, err);
+          });
+        }
+      }
+    }, CHECK_INTERVAL_MS);
   }
 
   /**
    * Stop the webhook server.
    */
   async stop(): Promise<void> {
+    if (this.staleCallReaperInterval) {
+      clearInterval(this.staleCallReaperInterval);
+      this.staleCallReaperInterval = null;
+    }
     return new Promise((resolve) => {
       if (this.server) {
         this.server.close(() => {
@@ -244,9 +327,14 @@ export class VoiceCallWebhookServer {
     try {
       body = await this.readBody(req, MAX_WEBHOOK_BODY_BYTES);
     } catch (err) {
-      if (err instanceof Error && err.message === "PayloadTooLarge") {
+      if (isRequestBodyLimitError(err, "PAYLOAD_TOO_LARGE")) {
         res.statusCode = 413;
         res.end("Payload Too Large");
+        return;
+      }
+      if (isRequestBodyLimitError(err, "REQUEST_BODY_TIMEOUT")) {
+        res.statusCode = 408;
+        res.end(requestBodyErrorToText("REQUEST_BODY_TIMEOUT"));
         return;
       }
       throw err;
@@ -296,24 +384,14 @@ export class VoiceCallWebhookServer {
   }
 
   /**
-   * Read request body as string.
+   * Read request body as string with timeout protection.
    */
-  private readBody(req: http.IncomingMessage, maxBytes: number): Promise<string> {
-    return new Promise((resolve, reject) => {
-      const chunks: Buffer[] = [];
-      let totalBytes = 0;
-      req.on("data", (chunk: Buffer) => {
-        totalBytes += chunk.length;
-        if (totalBytes > maxBytes) {
-          req.destroy();
-          reject(new Error("PayloadTooLarge"));
-          return;
-        }
-        chunks.push(chunk);
-      });
-      req.on("end", () => resolve(Buffer.concat(chunks).toString("utf-8")));
-      req.on("error", reject);
-    });
+  private readBody(
+    req: http.IncomingMessage,
+    maxBytes: number,
+    timeoutMs = 30_000,
+  ): Promise<string> {
+    return readRequestBodyWithLimit(req, { maxBytes, timeoutMs });
   }
 
   /**

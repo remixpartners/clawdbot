@@ -120,6 +120,7 @@ type CollectTelegramUnmentionedGroupIds =
 type ProbeTelegram = typeof import("../../telegram/probe.js").probeTelegram;
 type ResolveTelegramToken = typeof import("../../telegram/token.js").resolveTelegramToken;
 type SendMessageTelegram = typeof import("../../telegram/send.js").sendMessageTelegram;
+type SendPollTelegram = typeof import("../../telegram/send.js").sendPollTelegram;
 type MonitorTelegramProvider = typeof import("../../telegram/monitor.js").monitorTelegramProvider;
 type TelegramMessageActions =
   typeof import("../../channels/plugins/actions/telegram.js").telegramMessageActions;
@@ -131,6 +132,15 @@ type SignalMessageActions =
 type MonitorIMessageProvider = typeof import("../../imessage/monitor.js").monitorIMessageProvider;
 type ProbeIMessage = typeof import("../../imessage/probe.js").probeIMessage;
 type SendMessageIMessage = typeof import("../../imessage/send.js").sendMessageIMessage;
+
+// Linq channel types
+type SendMessageLinq = typeof import("../../linq/send.js").sendMessageLinq;
+type ProbeLinq = typeof import("../../linq/probe.js").probeLinq;
+type MonitorLinqProvider = typeof import("../../linq/monitor.js").monitorLinqProvider;
+type ListLinqAccountIds = typeof import("../../linq/accounts.js").listLinqAccountIds;
+type ResolveDefaultLinqAccountId =
+  typeof import("../../linq/accounts.js").resolveDefaultLinqAccountId;
+type ResolveLinqAccount = typeof import("../../linq/accounts.js").resolveLinqAccount;
 type GetActiveWebListener = typeof import("../../web/active-listener.js").getActiveWebListener;
 type GetWebAuthAgeMs = typeof import("../../web/auth-store.js").getWebAuthAgeMs;
 type LogoutWeb = typeof import("../../web/auth-store.js").logoutWeb;
@@ -169,10 +179,10 @@ type BuildTemplateMessageFromPayload =
 type MonitorLineProvider = typeof import("../../line/monitor.js").monitorLineProvider;
 
 export type RuntimeLogger = {
-  debug?: (message: string) => void;
-  info: (message: string) => void;
-  warn: (message: string) => void;
-  error: (message: string) => void;
+  debug?: (message: string, meta?: Record<string, unknown>) => void;
+  info: (message: string, meta?: Record<string, unknown>) => void;
+  warn: (message: string, meta?: Record<string, unknown>) => void;
+  error: (message: string, meta?: Record<string, unknown>) => void;
 };
 
 export type PluginRuntime = {
@@ -223,6 +233,7 @@ export type PluginRuntime = {
       dispatchReplyFromConfig: DispatchReplyFromConfig;
       finalizeInboundContext: FinalizeInboundContext;
       formatAgentEnvelope: FormatAgentEnvelope;
+      /** @deprecated Prefer `BodyForAgent` + structured user-context blocks (do not build plaintext envelopes for prompts). */
       formatInboundEnvelope: FormatInboundEnvelope;
       resolveEnvelopeFormatOptions: ResolveEnvelopeFormatOptions;
     };
@@ -300,6 +311,7 @@ export type PluginRuntime = {
       probeTelegram: ProbeTelegram;
       resolveTelegramToken: ResolveTelegramToken;
       sendMessageTelegram: SendMessageTelegram;
+      sendPollTelegram: SendPollTelegram;
       monitorTelegramProvider: MonitorTelegramProvider;
       messageActions: TelegramMessageActions;
     };
@@ -313,6 +325,14 @@ export type PluginRuntime = {
       monitorIMessageProvider: MonitorIMessageProvider;
       probeIMessage: ProbeIMessage;
       sendMessageIMessage: SendMessageIMessage;
+    };
+    linq: {
+      sendMessageLinq: SendMessageLinq;
+      probeLinq: ProbeLinq;
+      monitorLinqProvider: MonitorLinqProvider;
+      listLinqAccountIds: ListLinqAccountIds;
+      resolveDefaultLinqAccountId: ResolveDefaultLinqAccountId;
+      resolveLinqAccount: ResolveLinqAccount;
     };
     whatsapp: {
       getActiveWebListener: GetActiveWebListener;

@@ -1,4 +1,5 @@
 ---
+title: "Default AGENTS.md"
 summary: "Default OpenClaw agent instructions and skills roster for the personal assistant setup"
 read_when:
   - Starting a new OpenClaw agent session
@@ -23,6 +24,12 @@ mkdir -p ~/.openclaw/workspace
 cp docs/reference/templates/AGENTS.md ~/.openclaw/workspace/AGENTS.md
 cp docs/reference/templates/SOUL.md ~/.openclaw/workspace/SOUL.md
 cp docs/reference/templates/TOOLS.md ~/.openclaw/workspace/TOOLS.md
+```
+
+Optional: if you want a CEO-style multi-agent software delivery persona, start from the Architect soul template instead:
+
+```bash
+cp docs/reference/templates/SOUL.architect.md ~/.openclaw/workspace/SOUL.md
 ```
 
 3. Optional: if you want the personal assistant skill roster, replace AGENTS.md with this file:
@@ -110,7 +117,6 @@ git commit -m "Add Clawd workspace"
 - **OpenHue CLI** — Philips Hue lighting control for scenes and automations.
 - **OpenAI Whisper** — Local speech-to-text for quick dictation and voicemail transcripts.
 - **Gemini CLI** — Google Gemini models from the terminal for fast Q&A.
-- **bird** — X/Twitter CLI to tweet, reply, read threads, and search without a browser.
 - **agent-tools** — Utility toolkit for automations and helper scripts.
 
 ## Usage Notes

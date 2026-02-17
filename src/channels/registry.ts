@@ -1,6 +1,6 @@
+import { requireActivePluginRegistry } from "../plugins/runtime.js";
 import type { ChannelMeta } from "./plugins/types.js";
 import type { ChannelId } from "./plugins/types.js";
-import { requireActivePluginRegistry } from "../plugins/runtime.js";
 
 // Channel docking: add new core channels here (order + meta + aliases), then
 // register the plugin in its extension entrypoint and keep protocol IDs in sync.
@@ -8,10 +8,12 @@ export const CHAT_CHANNEL_ORDER = [
   "telegram",
   "whatsapp",
   "discord",
+  "irc",
   "googlechat",
   "slack",
   "signal",
   "imessage",
+  "linq",
 ] as const;
 
 export type ChatChannelId = (typeof CHAT_CHANNEL_ORDER)[number];
@@ -58,6 +60,16 @@ const CHAT_CHANNEL_META: Record<ChatChannelId, ChannelMeta> = {
     blurb: "very well supported right now.",
     systemImage: "bubble.left.and.bubble.right",
   },
+  irc: {
+    id: "irc",
+    label: "IRC",
+    selectionLabel: "IRC (Server + Nick)",
+    detailLabel: "IRC",
+    docsPath: "/channels/irc",
+    docsLabel: "irc",
+    blurb: "classic IRC networks with DM/channel routing and pairing controls.",
+    systemImage: "network",
+  },
   googlechat: {
     id: "googlechat",
     label: "Google Chat",
@@ -98,12 +110,24 @@ const CHAT_CHANNEL_META: Record<ChatChannelId, ChannelMeta> = {
     blurb: "this is still a work in progress.",
     systemImage: "message.fill",
   },
+  linq: {
+    id: "linq",
+    label: "Linq",
+    selectionLabel: "Linq (iMessage API)",
+    detailLabel: "Linq iMessage",
+    docsPath: "/channels/linq",
+    docsLabel: "linq",
+    blurb: "real iMessage blue bubbles via API — no Mac required. Get a token at linqapp.com.",
+    systemImage: "bubble.left.and.text.bubble.right",
+  },
 };
 
 export const CHAT_CHANNEL_ALIASES: Record<string, ChatChannelId> = {
   imsg: "imessage",
+  "internet-relay-chat": "irc",
   "google-chat": "googlechat",
   gchat: "googlechat",
+  "linq-imessage": "linq",
 };
 
 const normalizeChannelKey = (raw?: string | null): string | undefined => {
