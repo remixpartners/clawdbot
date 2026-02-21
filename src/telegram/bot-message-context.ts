@@ -23,6 +23,10 @@ import { formatLocationText, toLocationContext } from "../channels/location.js";
 import { logInboundDrop } from "../channels/logging.js";
 import { resolveMentionGatingWithBypass } from "../channels/mention-gating.js";
 import { recordInboundSession } from "../channels/session.js";
+import {
+  createStatusReactionController,
+  type StatusReactionController,
+} from "../channels/status-reactions.js";
 import type { OpenClawConfig } from "../config/config.js";
 import { loadConfig } from "../config/config.js";
 import { readSessionUpdatedAt, resolveStorePath } from "../config/sessions.js";
@@ -58,6 +62,12 @@ import {
 } from "./bot/helpers.js";
 import type { StickerMetadata, TelegramContext } from "./bot/types.js";
 import { evaluateTelegramGroupBaseAccess } from "./group-access.js";
+import {
+  buildTelegramStatusReactionVariants,
+  resolveTelegramAllowedEmojiReactions,
+  resolveTelegramReactionVariant,
+  resolveTelegramStatusReactionEmojis,
+} from "./status-reaction-variants.js";
 
 export type TelegramMediaRef = {
   path: string;
@@ -389,12 +399,11 @@ export const buildTelegramMessageContext = async ({
   let bodyText = rawBody;
   const hasAudio = allMedia.some((media) => media.contentType?.startsWith("audio/"));
 
-  // Audio transcription: transcribe voice notes before they reach the agent.
-  // In groups: enables mention detection in voice notes.
-  // In DMs: replaces <media:audio> placeholder with transcript text.
+  // Preflight audio transcription for mention detection in groups
+  // This allows voice notes to be checked for mentions before being dropped
   let preflightTranscript: string | undefined;
   const needsPreflightTranscription =
-    hasAudio && !hasUserText && (!isGroup || (requireMention && mentionRegexes.length > 0));
+    isGroup && requireMention && hasAudio && !hasUserText && mentionRegexes.length > 0;
 
   if (needsPreflightTranscription) {
     try {
@@ -414,53 +423,6 @@ export const buildTelegramMessageContext = async ({
       });
     } catch (err) {
       logVerbose(`telegram: audio preflight transcription failed: ${String(err)}`);
-    }
-
-    // Fallback: if the media pipeline returned nothing, try calling whisper-cli directly.
-    // This handles cases where the pipeline's attachment normalization or model resolution
-    // silently produces no output (e.g. format mismatch, missing config fields).
-    if (!preflightTranscript && allMedia.length > 0) {
-      const audioMedia = allMedia.find((m) => m.contentType?.startsWith("audio/"));
-      if (audioMedia?.path) {
-        try {
-          const { execFile } = await import("node:child_process");
-          const { promisify } = await import("node:util");
-          const { mkdtemp, readFile, rm } = await import("node:fs/promises");
-          const { tmpdir } = await import("node:os");
-          const pathMod = await import("node:path");
-          const execFileAsync = promisify(execFile);
-
-          const audioModels = cfg.tools?.media?.audio?.models;
-          const cliEntry = audioModels?.find(
-            (m: { type?: string; command?: string }) => m.type === "cli" || m.command,
-          );
-          if (cliEntry?.command) {
-            const outputDir = await mkdtemp(pathMod.join(tmpdir(), "openclaw-audio-fallback-"));
-            const outputBase = pathMod.join(outputDir, "out");
-            const resolvedArgs = (cliEntry.args ?? []).map((a: string) =>
-              a.replace("{{MediaPath}}", audioMedia.path).replace("{{OutputBase}}", outputBase),
-            );
-            try {
-              await execFileAsync(cliEntry.command, resolvedArgs, {
-                timeout: 30_000,
-                maxBuffer: 1024 * 1024,
-              });
-              const outputFile = outputBase + ".txt";
-              const text = (await readFile(outputFile, "utf-8")).trim();
-              if (text) {
-                preflightTranscript = text;
-                logVerbose(
-                  `telegram: audio fallback transcription succeeded (${text.length} chars)`,
-                );
-              }
-            } finally {
-              await rm(outputDir, { recursive: true, force: true }).catch(() => {});
-            }
-          }
-        } catch (fallbackErr) {
-          logVerbose(`telegram: audio fallback transcription failed: ${String(fallbackErr)}`);
-        }
-      }
     }
   }
 
@@ -566,11 +528,77 @@ export const buildTelegramMessageContext = async ({
       messageId: number,
       reactions: Array<{ type: "emoji"; emoji: string }>,
     ) => Promise<void>;
+    getChat?: (chatId: number | string) => Promise<unknown>;
   };
   const reactionApi =
     typeof api.setMessageReaction === "function" ? api.setMessageReaction.bind(api) : null;
-  const ackReactionPromise =
-    shouldAckReaction() && msg.message_id && reactionApi
+  const getChatApi = typeof api.getChat === "function" ? api.getChat.bind(api) : null;
+
+  // Status Reactions controller (lifecycle reactions)
+  const statusReactionsConfig = cfg.messages?.statusReactions;
+  const statusReactionsEnabled =
+    statusReactionsConfig?.enabled === true && Boolean(reactionApi) && shouldAckReaction();
+  const resolvedStatusReactionEmojis = resolveTelegramStatusReactionEmojis({
+    initialEmoji: ackReaction,
+    overrides: statusReactionsConfig?.emojis,
+  });
+  const statusReactionVariantsByEmoji = buildTelegramStatusReactionVariants(
+    resolvedStatusReactionEmojis,
+  );
+  let allowedStatusReactionEmojisPromise: Promise<Set<string> | null> | null = null;
+  const statusReactionController: StatusReactionController | null =
+    statusReactionsEnabled && msg.message_id
+      ? createStatusReactionController({
+          enabled: true,
+          adapter: {
+            setReaction: async (emoji: string) => {
+              if (reactionApi) {
+                if (!allowedStatusReactionEmojisPromise) {
+                  allowedStatusReactionEmojisPromise = resolveTelegramAllowedEmojiReactions({
+                    chat: msg.chat,
+                    chatId,
+                    getChat: getChatApi ?? undefined,
+                  }).catch((err) => {
+                    logVerbose(
+                      `telegram status-reaction available_reactions lookup failed for chat ${chatId}: ${String(err)}`,
+                    );
+                    return null;
+                  });
+                }
+                const allowedStatusReactionEmojis = await allowedStatusReactionEmojisPromise;
+                const resolvedEmoji = resolveTelegramReactionVariant({
+                  requestedEmoji: emoji,
+                  variantsByRequestedEmoji: statusReactionVariantsByEmoji,
+                  allowedEmojiReactions: allowedStatusReactionEmojis,
+                });
+                if (!resolvedEmoji) {
+                  return;
+                }
+                await reactionApi(chatId, msg.message_id, [
+                  { type: "emoji", emoji: resolvedEmoji },
+                ]);
+              }
+            },
+            // Telegram replaces atomically — no removeReaction needed
+          },
+          initialEmoji: ackReaction,
+          emojis: resolvedStatusReactionEmojis,
+          timing: statusReactionsConfig?.timing,
+          onError: (err) => {
+            logVerbose(`telegram status-reaction error for chat ${chatId}: ${String(err)}`);
+          },
+        })
+      : null;
+
+  // When status reactions are enabled, setQueued() replaces the simple ack reaction
+  const ackReactionPromise = statusReactionController
+    ? shouldAckReaction()
+      ? Promise.resolve(statusReactionController.setQueued()).then(
+          () => true,
+          () => false,
+        )
+      : null
+    : shouldAckReaction() && msg.message_id && reactionApi
       ? withTelegramApiErrorLogging({
           operation: "setMessageReaction",
           fn: () => reactionApi(chatId, msg.message_id, [{ type: "emoji", emoji: ackReaction }]),
@@ -789,6 +817,7 @@ export const buildTelegramMessageContext = async ({
     ackReactionPromise,
     reactionApi,
     removeAckAfterReply,
+    statusReactionController,
     accountId: account.accountId,
   };
 };

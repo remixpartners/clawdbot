@@ -3,7 +3,13 @@ import type { ChannelId } from "../channels/plugins/types.js";
 export type CronSchedule =
   | { kind: "at"; at: string }
   | { kind: "every"; everyMs: number; anchorMs?: number }
-  | { kind: "cron"; expr: string; tz?: string };
+  | {
+      kind: "cron";
+      expr: string;
+      tz?: string;
+      /** Optional deterministic stagger window in milliseconds (0 keeps exact schedule). */
+      staggerMs?: number;
+    };
 
 export type CronSessionTarget = "main" | "isolated";
 export type CronWakeMode = "next-heartbeat" | "now";
@@ -87,6 +93,8 @@ export type CronJobState = {
   consecutiveErrors?: number;
   /** Number of consecutive schedule computation errors. Auto-disables job after threshold. */
   scheduleErrorCount?: number;
+  /** Whether the last run's output was delivered to the target channel. */
+  lastDelivered?: boolean;
 };
 
 export type CronJob = {

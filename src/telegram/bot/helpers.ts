@@ -1,5 +1,6 @@
 import type { Chat, Message, MessageOrigin, User } from "@grammyjs/types";
 import { formatLocationText, type NormalizedLocation } from "../../channels/location.js";
+import { resolveTelegramPreviewStreamMode } from "../../config/discord-preview-streaming.js";
 import type { TelegramGroupConfig, TelegramTopicConfig } from "../../config/types.js";
 import { readChannelAllowFromStore } from "../../pairing/pairing-store.js";
 import {
@@ -101,15 +102,13 @@ export function resolveTelegramThreadSpec(params: {
       scope: params.isForum ? "forum" : "none",
     };
   }
-  // DM with forum/topics enabled — treat like a forum, not a flat DM
-  if (params.isForum && params.messageThreadId != null) {
-    return { id: params.messageThreadId, scope: "forum" };
+  if (params.messageThreadId == null) {
+    return { scope: "dm" };
   }
-  // Preserve thread ID for non-forum DM threads (session routing, #8891)
-  if (params.messageThreadId != null) {
-    return { id: params.messageThreadId, scope: "dm" };
-  }
-  return { scope: "dm" };
+  return {
+    id: params.messageThreadId,
+    scope: "dm",
+  };
 }
 
 /**
@@ -156,13 +155,10 @@ export function buildTypingThreadParams(messageThreadId?: number) {
 }
 
 export function resolveTelegramStreamMode(telegramCfg?: {
-  streamMode?: TelegramStreamMode;
+  streaming?: unknown;
+  streamMode?: unknown;
 }): TelegramStreamMode {
-  const raw = telegramCfg?.streamMode?.trim().toLowerCase();
-  if (raw === "off" || raw === "partial" || raw === "block") {
-    return raw;
-  }
-  return "partial";
+  return resolveTelegramPreviewStreamMode(telegramCfg);
 }
 
 export function buildTelegramGroupPeerId(chatId: number | string, messageThreadId?: number) {

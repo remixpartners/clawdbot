@@ -145,6 +145,25 @@ export async function readDockerContainerLabel(
   return raw;
 }
 
+export async function readDockerContainerEnvVar(
+  containerName: string,
+  envVar: string,
+): Promise<string | null> {
+  const result = await execDocker(
+    ["inspect", "-f", "{{range .Config.Env}}{{println .}}{{end}}", containerName],
+    { allowFailure: true },
+  );
+  if (result.code !== 0) {
+    return null;
+  }
+  for (const line of result.stdout.split(/\r?\n/)) {
+    if (line.startsWith(`${envVar}=`)) {
+      return line.slice(envVar.length + 1);
+    }
+  }
+  return null;
+}
+
 export async function readDockerPort(containerName: string, port: number) {
   const result = await execDocker(["port", containerName, `${port}/tcp`], {
     allowFailure: true,
@@ -270,27 +289,18 @@ export function buildSandboxCreateArgs(params: {
   if (params.cfg.user) {
     args.push("--user", params.cfg.user);
   }
-  // Sanitize environment variables to prevent credential leakage (OC-09 fix)
-  const envSanitization = sanitizeEnvVars(params.cfg.env ?? {}, {
-    strictMode: false, // Allow all non-blocked variables by default
-  });
-
-  // Log blocked variables for security audit
+  const envSanitization = sanitizeEnvVars(params.cfg.env ?? {});
   if (envSanitization.blocked.length > 0) {
     console.warn(
-      "[Security] Blocked environment variables:",
-      envSanitization.blocked.map((b) => b.key).join(", "),
+      "[Security] Blocked sensitive environment variables:",
+      envSanitization.blocked.join(", "),
     );
   }
-
-  // Log warnings (e.g., suspicious base64 values)
   if (envSanitization.warnings.length > 0) {
-    console.warn("[Security] Environment variable warnings:", envSanitization.warnings);
+    console.warn("[Security] Suspicious environment variables:", envSanitization.warnings);
   }
-
-  // Only pass sanitized (allowed) environment variables to Docker
   for (const [key, value] of Object.entries(envSanitization.allowed)) {
-    args.push("--env", key + "=" + value);
+    args.push("--env", `${key}=${value}`);
   }
   for (const cap of params.cfg.capDrop) {
     args.push("--cap-drop", cap);
